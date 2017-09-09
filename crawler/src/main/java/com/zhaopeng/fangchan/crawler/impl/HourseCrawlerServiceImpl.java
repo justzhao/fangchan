@@ -2,6 +2,9 @@ package com.zhaopeng.fangchan.crawler.impl;
 
 import com.zhaopeng.fangchan.CrawlerException;
 import com.zhaopeng.fangchan.crawler.HourseCrawlerService;
+import com.zhaopeng.fangchan.entity.City;
+import com.zhaopeng.fangchan.entity.CrawlerConstant;
+import us.codecraft.webmagic.Site;
 import us.codecraft.webmagic.Spider;
 import us.codecraft.webmagic.pipeline.Pipeline;
 import us.codecraft.webmagic.processor.PageProcessor;
@@ -13,27 +16,23 @@ import us.codecraft.webmagic.processor.PageProcessor;
 public class HourseCrawlerServiceImpl implements HourseCrawlerService {
 
 
-    private final String url;
+    private final City city;
 
     private final PageProcessor pageProcessor;
 
     private final Pipeline pipeline;
 
-    private final int theads;
+    private final int threads;
 
 
     private Spider spider;
 
 
-    public HourseCrawlerServiceImpl(String url, PageProcessor pageProcessor, Pipeline pipeline, int theads) {
-        this.url = url;
+    public HourseCrawlerServiceImpl(City city, PageProcessor pageProcessor, Pipeline pipeline, int threads) {
+        this.city = city;
         this.pageProcessor = pageProcessor;
         this.pipeline = pipeline;
-        this.theads = theads;
-    }
-
-    public String getUrl() {
-        return url;
+        this.threads = threads;
     }
 
 
@@ -41,10 +40,12 @@ public class HourseCrawlerServiceImpl implements HourseCrawlerService {
 
         spider = Spider.create(pageProcessor);
         spider.addPipeline(pipeline);
-        spider.addUrl(url);
-        spider.thread(theads);
-
+        spider.addUrl(city.getUrl());
+        spider.thread(threads);
+        Site site = spider.getSite();
+        site.addCookie(CrawlerConstant.CITY, city.getName());
     }
+
 
     public void start() throws CrawlerException {
         if (spider == null) {
