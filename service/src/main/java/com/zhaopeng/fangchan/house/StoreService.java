@@ -1,4 +1,4 @@
-package com.zhaopeng.fangchan.hourse;
+package com.zhaopeng.fangchan.house;
 
 /**
  * 存储爬虫信息，持久化

@@ -41,5 +41,11 @@
             <artifactId>spring-context</artifactId>
             <version>${spring.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.zhaopeng.fangchan</groupId>
+            <artifactId>crawler</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 </project>

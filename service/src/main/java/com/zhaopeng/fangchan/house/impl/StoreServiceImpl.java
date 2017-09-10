@@ -1,6 +1,6 @@
-package com.zhaopeng.fangchan.hourse.impl;
+package com.zhaopeng.fangchan.house.impl;
 
-import com.zhaopeng.fangchan.hourse.StoreService;
+import com.zhaopeng.fangchan.house.StoreService;
 
 /**
  * Created by zhaopeng on 2017/9/9.

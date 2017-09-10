@@ -1,6 +1,6 @@
-package com.zhaopeng.fangchan.hourse.impl;
+package com.zhaopeng.fangchan.house.impl;
 
-import com.zhaopeng.fangchan.hourse.EstateService;
+import com.zhaopeng.fangchan.house.EstateService;
 import org.springframework.stereotype.Service;
 
 /**
