@@ -7,6 +7,7 @@ public class HouseDTO {
     private String title;// 页面标题
     private String info; // 房子信息
     private String price; // 价格
+    private String priceInfo;// 价格信息
     private String averagePrice; //均价
     private String address; // 地址
     private String img; //户型图
@@ -18,6 +19,14 @@ public class HouseDTO {
     private String communityInfo;//小区信息
     private String url; //本房子的url
 
+
+    public String getPriceInfo() {
+        return priceInfo;
+    }
+
+    public void setPriceInfo(String priceInfo) {
+        this.priceInfo = priceInfo;
+    }
 
     public String getTitle() {
         return title;
