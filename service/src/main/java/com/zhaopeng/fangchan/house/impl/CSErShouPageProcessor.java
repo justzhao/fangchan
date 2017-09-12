@@ -56,21 +56,92 @@ public class CSErShouPageProcessor implements Processor {
             houseDTO.setAveragePrice(getAveragePrice(html));
             houseDTO.setAddress(getAddress(html));
             houseDTO.setArea(getArea(html));
-            houseDTO.setBasicInfo("");
-            houseDTO.setTradingInfo("");
-            houseDTO.setFeature("");
-            houseDTO.setRoomInfo("");
-            houseDTO.setCommunityInfo("");
+            houseDTO.setBasicInfo(getBasicInfo(html));
+            houseDTO.setTradingInfo(getTradingInfo(html));
+            houseDTO.setFeature(getFeature(html));
+            houseDTO.setRoomInfo(getRoomInfo(html));
+           // houseDTO.setCommunityInfo(getCommunityInfo(html));
             houseDTO.setUrl(page.getUrl().get());
 
         }
         page.putField(CrawlerConstant.HOUSE, h);
     }
 
-    private String getArea(Html html){
-        String area = html.xpath("//div[@class=\"area\"]").$("div>div","text").get();
+    private String getCommunityInfo(Html html){
+            //xiaoqu_content clear  resblockCardContainer
+     //   List<Selectable> xiaoqus
+                String items=html.xpath("//div[@id=\"resblockCardContainer\"]").get();
+                //.xpath("//div[@class=\"xiaoquCard\"]").xpath("//div[@class=\"xiaoqu_main fl\"]").xpath("//div[@class=\"xiaoqu_info\"]").nodes();
+
+
+
+        return null;
+    }
+
+    private String getRoomInfo(Html html) {
+        List<Selectable> rooms = html.xpath("//div[@id=\"layout\"]").xpath("//div[@class=\"content\"]").xpath("//div[@class=\"row\"]").nodes();
+        StringBuilder builder = new StringBuilder();
+        for (Selectable item : rooms) {
+            List<Selectable> cols = item.xpath("//div[@class=\"col\"]").nodes();
+            for (Selectable col : cols) {
+
+                builder.append(col.$("div", "text"));
+                builder.append(":");
+            }
+            builder.append(", ");
+        }
+        return builder.toString();
+    }
+
+    private String getFeature(Html html) {
+        StringBuilder builder = new StringBuilder();
+        Selectable tags = html.xpath("//div[@class=\"introContent showbasemore\"]").xpath("//div[@class=\"tags clear\"]").xpath("//div[@class=\"content\"]");
+        builder.append(tags.xpath("//a[@class=\"tag taxfree\"]").$("a", "text"));
+        builder.append(",");
+        builder.append(tags.xpath("//a[@class=\"tag is_see_free\"]").$("a", "text"));
+        List<Selectable> features = html.xpath("//div[@class=\"introContent showbasemore\"]").xpath("//div[@class=\"baseattribute clear\"]").nodes();
+        for (Selectable item : features) {
+            builder.append(item.xpath("//div[@class=\"name\"]").$("div", "text").get());
+            builder.append(",");
+            builder.append(item.xpath("//div[@class=\"content\"]").$("div", "text").get());
+        }
+        return builder.toString();
+    }
+
+    private String getTradingInfo(Html html) {
+        StringBuilder builder = new StringBuilder();
+        List<Selectable> trading = html.xpath("//div[@class=\"transaction\"]").xpath("//div[@class=\"content\"]").$("li").nodes();
+
+        for (Selectable item : trading) {
+            builder.append(item.$("li > span", "text").get());
+            builder.append(":");
+            builder.append(item.$("li", "text"));
+            builder.append(",");
+        }
+        return builder.toString();
+
+    }
+
+    private String getBasicInfo(Html html) {
+
+        StringBuilder builder = new StringBuilder();
+        List<Selectable> basics = html.xpath("//div[@class=\"introContent\"]").xpath("//div[@class=\"content\"]").$("li").nodes();
+
+        for (Selectable item : basics) {
+            builder.append(item.$("li > span", "text").get());
+            builder.append(":");
+            builder.append(item.$("li", "text"));
+            builder.append(",");
+        }
+        return builder.toString();
+
+    }
+
+    private String getArea(Html html) {
+        String area = html.xpath("//div[@class=\"area\"]").$("div>div", "text").get();
         return area;
     }
+
     private String getAddress(Html html) {
         StringBuilder builder = new StringBuilder();
         Selectable aroundInfo = html.xpath("//div[@class=\"aroundInfo\"]");
@@ -78,8 +149,8 @@ public class CSErShouPageProcessor implements Processor {
         builder.append(name);
         builder.append(",");
         List<Selectable> info = aroundInfo.xpath("//div[@class=\"areaName\"]").xpath("//span[@class=\"info\"]").$("span > a").nodes();
-        for(Selectable item:info){
-            builder.append(item.$("a","text"));
+        for (Selectable item : info) {
+            builder.append(item.$("a", "text"));
             builder.append(",");
 
         }
