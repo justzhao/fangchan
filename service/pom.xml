@@ -6,10 +6,8 @@
         <version>${project.version}</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-
     <artifactId>service</artifactId>
     <packaging>jar</packaging>
-
     <name>service</name>
     <url>http://maven.apache.org</url>
 
@@ -46,6 +44,11 @@
             <groupId>com.zhaopeng.fangchan</groupId>
             <artifactId>crawler</artifactId>
             <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
         </dependency>
     </dependencies>
 </project>
