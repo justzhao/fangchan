@@ -2,6 +2,8 @@ package com.zhaopeng.fangchan.store;
 
 
 import com.google.common.collect.Lists;
+import com.zhaopeng.fangchan.entity.EstateInfo;
+import com.zhaopeng.fangchan.util.CSVUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,15 +16,16 @@ public class PutService extends ServiceThread {
 
     private static final Logger logger = LoggerFactory.getLogger(PutService.class);
 
-    private volatile List<String> requestsWrite = Lists.newArrayList();
+    private volatile List<EstateInfo> requestsWrite = Lists.newArrayList();
 
-    private volatile List<String> requestsRead = Lists.newArrayList();
+    private volatile List<EstateInfo> requestsRead = Lists.newArrayList();
+
 
     public String getServiceName() {
         return "putService";
     }
 
-    public void putRequest(final String request) {
+    public void putRequest(final EstateInfo request) {
         synchronized (this) {
             this.requestsWrite.add(request);
             if (!this.hasNotified) {
@@ -58,7 +61,7 @@ public class PutService extends ServiceThread {
     }
 
     private void swapRequests() {
-        List<String> tmp = this.requestsWrite;
+        List<EstateInfo> tmp = this.requestsWrite;
         this.requestsWrite = this.requestsRead;
         this.requestsRead = tmp;
     }
@@ -66,9 +69,9 @@ public class PutService extends ServiceThread {
     private void doCommit() {
         if (!this.requestsRead.isEmpty()) {
 
-            for (String req : this.requestsRead) {
+            for (EstateInfo req : this.requestsRead) {
 
-               // CSVUtil.appendContent(,req);
+               CSVUtil.appendContent(req.getDir(),req.getContent());
             }
             this.requestsRead.clear();
 

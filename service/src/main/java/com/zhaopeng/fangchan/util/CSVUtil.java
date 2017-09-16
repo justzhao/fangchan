@@ -1,11 +1,19 @@
 package com.zhaopeng.fangchan.util;
 
+import com.zhaopeng.fangchan.store.StoreConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.*;
+import java.nio.file.Files;
 
 /**
  * Created by zhaopeng on 2017/9/14.
  */
 public class CSVUtil {
+
+
+    private static final Logger logger = LoggerFactory.getLogger(CSVUtil.class);
 
 
     /**
@@ -15,6 +23,14 @@ public class CSVUtil {
     public static void appendContent(String filePath, String content) {
         try {
             File csv = new File(filePath);
+            if (!csv.exists()) {
+                csv.createNewFile();
+            }
+            if (csv.length() > StoreConfig.fileSize) {
+                //当文件满了之后需要滚动文件
+                rollFile(csv);
+                csv=new File(filePath);
+            }
             BufferedWriter bw = new BufferedWriter(new FileWriter(csv, true));
             bw.write(content);
             bw.newLine();
@@ -24,6 +40,54 @@ public class CSVUtil {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private static void rollFile(File file) {
+
+
+        String name = file.getName();
+        String ext = getExtensionName(name);
+        String originName = getFileNameNoExt(name);
+        File parent = file.getParentFile();
+        String childs[] = parent.list();
+
+        int size = childs == null ? 0 : childs.length;
+        String newPath = parent.getPath() + File.separator + originName + "_" + size + "." + ext;
+        File newFile = new File(newPath);
+
+        try {
+            Files.copy(file.toPath(), newFile.toPath());
+            file.deleteOnExit();
+        } catch (IOException e) {
+            logger.error("rollFile error {}", e);
+        }
+    }
+
+    public static String getExtensionName(String filename) {
+        if ((filename != null) && (filename.length() > 0)) {
+            int dot = filename.lastIndexOf('.');
+            if ((dot > -1) && (dot < (filename.length() - 1))) {
+                return filename.substring(dot + 1);
+            }
+        }
+        return filename;
+    }
+
+    public static String getFileNameNoExt(String filename) {
+        if ((filename != null) && (filename.length() > 0)) {
+            int dot = filename.lastIndexOf('.');
+            if ((dot > -1) && (dot < (filename.length()))) {
+                return filename.substring(0, dot);
+            }
+        }
+        return filename;
+    }
+
+    public static void main(String args[]) {
+        String filePath = "C://heheda//123.txt";
+        File file = new File(filePath);
+
+        rollFile(file);
     }
 
 }
