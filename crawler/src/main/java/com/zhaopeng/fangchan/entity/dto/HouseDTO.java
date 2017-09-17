@@ -131,4 +131,24 @@ public class HouseDTO {
     public void setUrl(String url) {
         this.url = url;
     }
+
+    @Override
+    public String toString() {
+        return "HouseDTO{" +
+                "title='" + title + '\'' +
+                ", info='" + info + '\'' +
+                ", price='" + price + '\'' +
+                ", priceInfo='" + priceInfo + '\'' +
+                ", averagePrice='" + averagePrice + '\'' +
+                ", address='" + address + '\'' +
+                ", img='" + img + '\'' +
+                ", area='" + area + '\'' +
+                ", basicInfo='" + basicInfo + '\'' +
+                ", tradingInfo='" + tradingInfo + '\'' +
+                ", feature='" + feature + '\'' +
+                ", roomInfo='" + roomInfo + '\'' +
+                ", communityInfo='" + communityInfo + '\'' +
+                ", url='" + url + '\'' +
+                '}';
+    }
 }

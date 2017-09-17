@@ -6,6 +6,7 @@ package com.zhaopeng.fangchan.entity;
 public class CrawlerConstant {
 
     public static String CITY="city";
+    public static String TYPE="type";
 
     public static String HOUSE="house";
 

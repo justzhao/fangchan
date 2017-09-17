@@ -2,10 +2,10 @@ package com.zhaopeng.fangchan.house.impl;
 
 import com.zhaopeng.fangchan.entity.CrawlerConstant;
 import com.zhaopeng.fangchan.entity.dto.HouseDTO;
-import com.zhaopeng.fangchan.processor.LianjiaProcessor;
 import com.zhaopeng.fangchan.processor.Processor;
+import org.assertj.core.util.Strings;
+import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.Page;
-import us.codecraft.webmagic.Spider;
 import us.codecraft.webmagic.selector.Html;
 import us.codecraft.webmagic.selector.Selectable;
 
@@ -14,6 +14,7 @@ import java.util.List;
 /**
  * Created by zhaopeng on 2017/9/10.
  */
+@Service
 public class CSErShouPageProcessor implements Processor {
 
 
@@ -42,7 +43,7 @@ public class CSErShouPageProcessor implements Processor {
 
     private void processDetail(Page page) {
         //https://cs.lianjia.com/ershoufang/104100562293.html
-        HouseDTO h = new HouseDTO();
+
         if (page == null || page.getHtml() == null) {
             return;
         }
@@ -60,23 +61,12 @@ public class CSErShouPageProcessor implements Processor {
             houseDTO.setTradingInfo(getTradingInfo(html));
             houseDTO.setFeature(getFeature(html));
             houseDTO.setRoomInfo(getRoomInfo(html));
-           // houseDTO.setCommunityInfo(getCommunityInfo(html));
             houseDTO.setUrl(page.getUrl().get());
-
+            page.putField(CrawlerConstant.HOUSE, houseDTO);
         }
-        page.putField(CrawlerConstant.HOUSE, h);
+
     }
 
-    private String getCommunityInfo(Html html){
-            //xiaoqu_content clear  resblockCardContainer
-     //   List<Selectable> xiaoqus
-                String items=html.xpath("//div[@id=\"resblockCardContainer\"]").get();
-                //.xpath("//div[@class=\"xiaoquCard\"]").xpath("//div[@class=\"xiaoqu_main fl\"]").xpath("//div[@class=\"xiaoqu_info\"]").nodes();
-
-
-
-        return null;
-    }
 
     private String getRoomInfo(Html html) {
         List<Selectable> rooms = html.xpath("//div[@id=\"layout\"]").xpath("//div[@class=\"content\"]").xpath("//div[@class=\"row\"]").nodes();
@@ -90,7 +80,7 @@ public class CSErShouPageProcessor implements Processor {
             }
             builder.append(", ");
         }
-        return builder.toString();
+        return builder.toString().replace(",", "|");
     }
 
     private String getFeature(Html html) {
@@ -105,7 +95,7 @@ public class CSErShouPageProcessor implements Processor {
             builder.append(",");
             builder.append(item.xpath("//div[@class=\"content\"]").$("div", "text").get());
         }
-        return builder.toString();
+        return builder.toString().replaceAll(",", "|");
     }
 
     private String getTradingInfo(Html html) {
@@ -118,7 +108,7 @@ public class CSErShouPageProcessor implements Processor {
             builder.append(item.$("li", "text"));
             builder.append(",");
         }
-        return builder.toString();
+        return builder.toString().replaceAll(",", "|");
 
     }
 
@@ -133,13 +123,17 @@ public class CSErShouPageProcessor implements Processor {
             builder.append(item.$("li", "text"));
             builder.append(",");
         }
-        return builder.toString();
+        return builder.toString().replaceAll(",", "|");
 
     }
 
     private String getArea(Html html) {
         String area = html.xpath("//div[@class=\"area\"]").$("div>div", "text").get();
-        return area;
+        if (Strings.isNullOrEmpty(area)) {
+
+            return area;
+        }
+        return area.replaceAll(",", "|");
     }
 
     private String getAddress(Html html) {
@@ -155,25 +149,40 @@ public class CSErShouPageProcessor implements Processor {
 
         }
 
-        return builder.toString();
+        return builder.toString().replaceAll(",", "|");
     }
 
     private String getAveragePrice(Html html) {
 
         String price = html.xpath("//div[@class=\"price\"]").xpath("//span[@class=\"unitPriceValue\"]").$("span", "text").get();
-        return price;
+        if (Strings.isNullOrEmpty(price)) {
+            return price;
+        }
+        return price.replaceAll(",", "|") + "元/平";
     }
 
     private String getPriceInfo(Html html) {
-        String priceInfo = html.xpath("//div[@class=\"price\"]").get();
-        return priceInfo;
+        Selectable tax = html.xpath("//div[@class=\"price\"]").xpath("//div[@class=\"tax\"]").xpath("//span[@class=\"taxtext\"]");
+
+        StringBuilder builder = new StringBuilder();
+        List<Selectable> taxs = tax.$("span > span").nodes();
+        for(Selectable item:taxs){
+
+            builder.append(item.$("span","text").get());
+
+        }
+
+        return builder.toString().replace(",","|");
     }
 
     private String getPrice(Html html) {
 
         String price = html.xpath("//div[@class=\"price\"]").$("div>span", "text").get();
 
-        return price;
+        if (Strings.isNullOrEmpty(price)) {
+            return price;
+        }
+        return price.replaceAll(",", "|") + "万";
     }
 
     private String getInfo(Html html) {
@@ -186,7 +195,7 @@ public class CSErShouPageProcessor implements Processor {
             builder.append(",");
 
         }
-        return builder.toString();
+        return builder.toString().replaceAll(",", "|");
     }
 
     private String getTitle(Html html) {
@@ -196,14 +205,14 @@ public class CSErShouPageProcessor implements Processor {
         String subtitle = html.xpath("//div[@class=\"title\"]").$("div>div", "text").get();
         builder.append(",");
         builder.append(subtitle);
-        return builder.toString();
+        return builder.toString().replaceAll(",", "|");
     }
 
 
     public static void main(String args[]) {
         String url = "https://cs.lianjia.com/ershoufang/";
 
-        Spider.create(new LianjiaProcessor(new CSErShouPageProcessor())).addUrl(url).thread(1).run();
+        // Spider.create(new LianjiaProcessor(new CSErShouPageProcessor())).addUrl(url).thread(1).run();
     }
 
 }

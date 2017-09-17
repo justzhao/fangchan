@@ -9,6 +9,6 @@ import org.springframework.context.annotation.ImportResource;
 
 
 @Configuration
-@ImportResource({"classpath:common/application_base.xml"})
+@ImportResource({"classpath:common/applicationContext.xml"})
 public class Configurater {
 }

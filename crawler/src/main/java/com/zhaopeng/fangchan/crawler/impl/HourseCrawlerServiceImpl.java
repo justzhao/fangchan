@@ -1,9 +1,14 @@
 package com.zhaopeng.fangchan.crawler.impl;
 
-import com.zhaopeng.fangchan.CrawlerException;
 import com.zhaopeng.fangchan.crawler.HourseCrawlerService;
 import com.zhaopeng.fangchan.entity.City;
 import com.zhaopeng.fangchan.entity.CrawlerConstant;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.Site;
 import us.codecraft.webmagic.Spider;
 import us.codecraft.webmagic.pipeline.Pipeline;
@@ -12,28 +17,29 @@ import us.codecraft.webmagic.processor.PageProcessor;
 /**
  * Created by zhaopeng on 2017/9/9.
  */
+@Service
+public class HourseCrawlerServiceImpl implements HourseCrawlerService,InitializingBean {
 
-public class HourseCrawlerServiceImpl implements HourseCrawlerService {
+
+    private static final Logger logger = LoggerFactory.getLogger(HourseCrawlerServiceImpl.class);
 
 
-    private final City city;
+    @Autowired
+    private City city;
 
-    private final PageProcessor pageProcessor;
+    @Autowired
+    private  PageProcessor pageProcessor;
 
-    private final Pipeline pipeline;
+    @Autowired
+    private  Pipeline pipeline;
 
-    private final int threads;
+    @Value("${crawler.threads}")
+    private  int threads;
 
 
     private Spider spider;
 
 
-    public HourseCrawlerServiceImpl(City city, PageProcessor pageProcessor, Pipeline pipeline, int threads) {
-        this.city = city;
-        this.pageProcessor = pageProcessor;
-        this.pipeline = pipeline;
-        this.threads = threads;
-    }
 
 
     public void init() {
@@ -44,16 +50,23 @@ public class HourseCrawlerServiceImpl implements HourseCrawlerService {
         spider.thread(threads);
         Site site = spider.getSite();
         site.addCookie(CrawlerConstant.CITY, city.getName());
+        site.addCookie(CrawlerConstant.TYPE,city.getType());
+
+        start();
     }
 
 
-    public void start() throws CrawlerException {
+    public void start()  {
         if (spider == null) {
-            throw new CrawlerException("爬虫没有实例化");
+            logger.error("爬虫没有实例化");
         }
         spider.start();
 
     }
 
 
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        init();
+    }
 }

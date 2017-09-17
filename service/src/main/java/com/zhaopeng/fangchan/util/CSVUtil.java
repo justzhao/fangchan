@@ -24,6 +24,7 @@ public class CSVUtil {
         try {
             File csv = new File(filePath);
             if (!csv.exists()) {
+                csv.getParentFile().mkdirs();
                 csv.createNewFile();
             }
             if (csv.length() > StoreConfig.fileSize) {
@@ -31,7 +32,9 @@ public class CSVUtil {
                 rollFile(csv);
                 csv=new File(filePath);
             }
-            BufferedWriter bw = new BufferedWriter(new FileWriter(csv, true));
+            OutputStreamWriter writerStream = new OutputStreamWriter(new FileOutputStream(csv,true),"GBK");
+
+            BufferedWriter bw = new BufferedWriter(writerStream);
             bw.write(content);
             bw.newLine();
             bw.close();

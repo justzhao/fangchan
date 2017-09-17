@@ -9,21 +9,9 @@
            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.3.xsd">
 
 
-    <context:component-scan base-package="com.zhaopeng.fangchan">
 
-    </context:component-scan>
-    <bean id="propertyPlaceholderConfigurer"
-          class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-        <property name="order" value="100"/>
-        <property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE"/>
-        <property name="ignoreResourceNotFound" value="true"/>
-        <property name="ignoreUnresolvablePlaceholders" value="true"/>
-        <property name="locations">
-            <list>
-                <value>classpath:conf/application.properties</value>
-            </list>
-        </property>
-        <property name="fileEncoding" value="UTF-8"></property>
-    </bean>
+    <import resource="classpath:common/application_base.xml"/>
+
+    <import resource="classpath:common/application_bean.xml"/>
 
 </beans>

@@ -9,21 +9,10 @@
            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.3.xsd">
 
 
-    <context:component-scan base-package="com.zhaopeng.fangchan">
-
-    </context:component-scan>
-    <bean id="propertyPlaceholderConfigurer"
-          class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-        <property name="order" value="100"/>
-        <property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE"/>
-        <property name="ignoreResourceNotFound" value="true"/>
-        <property name="ignoreUnresolvablePlaceholders" value="true"/>
-        <property name="locations">
-            <list>
-                <value>classpath:conf/application.properties</value>
-            </list>
-        </property>
-        <property name="fileEncoding" value="UTF-8"></property>
+    <bean class="com.zhaopeng.fangchan.entity.City" id="city">
+        <property name="url" value="https://cs.lianjia.com/ershoufang/"></property>
+        <property name="name" value="changsha"></property>
+        <property name="type" value="1"></property>
     </bean>
 
 </beans>

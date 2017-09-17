@@ -6,12 +6,14 @@ import com.zhaopeng.fangchan.entity.EstateInfo;
 import com.zhaopeng.fangchan.util.CSVUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 /**
  * Created by zhaopeng on 2017/9/14.
  */
+@Service
 public class PutService extends ServiceThread {
 
     private static final Logger logger = LoggerFactory.getLogger(PutService.class);
@@ -65,6 +67,11 @@ public class PutService extends ServiceThread {
         this.requestsWrite = this.requestsRead;
         this.requestsRead = tmp;
     }
+
+    protected void onWaitEnd() {
+        this.swapRequests();
+    }
+
 
     private void doCommit() {
         if (!this.requestsRead.isEmpty()) {

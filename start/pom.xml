@@ -29,6 +29,11 @@
             <artifactId>spring-boot-starter</artifactId>
             <version>${spring.boot.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.zhaopeng.fangchan</groupId>
+            <artifactId>service</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
 
         <dependency>

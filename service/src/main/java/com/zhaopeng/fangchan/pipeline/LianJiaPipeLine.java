@@ -4,6 +4,8 @@ import com.zhaopeng.fangchan.entity.CrawlerConstant;
 import com.zhaopeng.fangchan.entity.EstateInfo;
 import com.zhaopeng.fangchan.entity.dto.HouseDTO;
 import com.zhaopeng.fangchan.store.PutService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,6 +23,9 @@ import static com.zhaopeng.fangchan.entity.CrawlerConstant.HOUSE;
 @Service
 public class LianJiaPipeLine implements Pipeline, InitializingBean {
 
+
+    private Logger logger = LoggerFactory.getLogger(LianJiaPipeLine.class);
+
     @Autowired
     private PutService putService;
 
@@ -29,12 +34,12 @@ public class LianJiaPipeLine implements Pipeline, InitializingBean {
 
         HouseDTO h = resultItems.get(HOUSE);
         Site site = task.getSite();
-
-
-
         EstateInfo info = new EstateInfo();
         info.setContent(buildContent(h));
         info.setCity(site.getCookies().get(CrawlerConstant.CITY));
+        info.setType(site.getCookies().get(CrawlerConstant.TYPE));
+
+        logger.info("process Info {}",resultItems);
         putService.putRequest(info);
     }
 

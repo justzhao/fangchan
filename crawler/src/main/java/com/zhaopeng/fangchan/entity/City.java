@@ -15,6 +15,7 @@ package com.zhaopeng.fangchan.entity;
 public class City {
     private String name;
     private String url;
+    //1 表示二手，0表示新房
     private String type;
 
     public String getName() {
