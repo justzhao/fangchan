@@ -1,6 +1,7 @@
 package com.zhaopeng.fangchan.util;
 
 import com.zhaopeng.fangchan.store.StoreConfig;
+import org.assertj.core.util.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,6 +22,9 @@ public class CSVUtil {
      * @param content  用逗号分开
      */
     public static void appendContent(String filePath, String content) {
+        if(Strings.isNullOrEmpty(content)){
+            return;
+        }
         try {
             File csv = new File(filePath);
             if (!csv.exists()) {

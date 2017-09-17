@@ -24,7 +24,6 @@ public class LianjiaProcessor implements PageProcessor {
 
 
 
-
     public void process(Page page) {
 
         processor.processPage(page);

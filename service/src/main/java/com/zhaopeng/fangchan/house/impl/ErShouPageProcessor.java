@@ -1,9 +1,13 @@
 package com.zhaopeng.fangchan.house.impl;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.zhaopeng.fangchan.entity.CrawlerConstant;
 import com.zhaopeng.fangchan.entity.dto.HouseDTO;
 import com.zhaopeng.fangchan.processor.Processor;
 import org.assertj.core.util.Strings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.selector.Html;
@@ -15,10 +19,13 @@ import java.util.List;
  * Created by zhaopeng on 2017/9/10.
  */
 @Service
-public class CSErShouPageProcessor implements Processor {
+public class ErShouPageProcessor implements Processor {
 
+    Logger logger = LoggerFactory.getLogger(ErShouPageProcessor.class);
 
-    private static String regexDetail = "https://cs\\.lianjia\\.com/ershoufang/.*\\.html";
+//    private static String regexDetail = "https://*\\.lianjia\\.com/ershoufang/.*\\.html";
+
+    private static String regexDetail = "https://.*\\.lianjia\\.com/ershoufang/.*\\.html";
 
     public void processPage(Page page) {
 
@@ -36,14 +43,40 @@ public class CSErShouPageProcessor implements Processor {
             // 获取详情页面的url
             List<String> details = html.xpath("//a[@class=\"title\"]").links().regex(regexDetail).all();
             page.addTargetRequests(details);
-            List<String> nextUrls = html.xpath("//div[@class=\"pagination_group_a\"]").links().all();
-            page.addTargetRequests(nextUrls);
+            //  List<String> nextUrls = html.xpath("//div[@class=\"pagination_group_a\"]").links().all();
+
+            String pageInfo = html.xpath("//div[@class=\"page-box house-lst-page-box\"]").$("div", "page-data").get();
+            //  https://hz.lianjia.com/ershoufang
+            // /hz.lianjia.com//ershoufang/pg3/
+            //"ershoufang/pg{page}";
+            // hz.lianjia.com//ershoufang/pg1rshoufang%2Fpg3/
+            String childUrl = html.xpath("//div[@class=\"page-box house-lst-page-box\"]").$("div", "page-url").get();
+
+            try {
+                //{"totalPage":100,"curPage":1} //  /ershoufang/pg{page}/
+                JSONObject pageData = JSON.parseObject(pageInfo);
+             //   URL pageUrl = new java.net.URL(page.getUrl().get());
+             //   String host = pageUrl.getHost();// host
+                if (pageData != null && !Strings.isNullOrEmpty(childUrl)) {
+                    Integer curPage = pageData.getInteger("curPage");
+                    Integer totalPage = pageData.getInteger("totalPage");
+                    for (; curPage <= totalPage; curPage++) {
+                        String baseUrl = childUrl.replace("{page}", String.valueOf(curPage));
+                       // String url = host + "/" + baseUrl;
+                        page.addTargetRequest(baseUrl);
+                    }
+                }
+
+
+            } catch (Exception e) {
+                logger.error("processUrl pageUrl {} error {}.", page.getUrl(), e);
+            }
+
+            //  page.addTargetRequests(nextUrls);
         }
     }
 
     private void processDetail(Page page) {
-        //https://cs.lianjia.com/ershoufang/104100562293.html
-
         if (page == null || page.getHtml() == null) {
             return;
         }
@@ -166,13 +199,13 @@ public class CSErShouPageProcessor implements Processor {
 
         StringBuilder builder = new StringBuilder();
         List<Selectable> taxs = tax.$("span > span").nodes();
-        for(Selectable item:taxs){
+        for (Selectable item : taxs) {
 
-            builder.append(item.$("span","text").get());
+            builder.append(item.$("span", "text").get());
 
         }
 
-        return builder.toString().replace(",","|");
+        return builder.toString().replace(",", "|");
     }
 
     private String getPrice(Html html) {

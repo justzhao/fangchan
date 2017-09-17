@@ -10,8 +10,9 @@
 
 
     <bean class="com.zhaopeng.fangchan.entity.City" id="city">
-        <property name="url" value="https://cs.lianjia.com/ershoufang/"></property>
-        <property name="name" value="changsha"></property>
+
+        <property name="url" value="https://hz.lianjia.com/ershoufang/"></property>
+        <property name="name" value="hangzhou"></property>
         <property name="type" value="1"></property>
     </bean>
 

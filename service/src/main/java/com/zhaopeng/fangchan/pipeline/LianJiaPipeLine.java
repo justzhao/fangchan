@@ -39,7 +39,7 @@ public class LianJiaPipeLine implements Pipeline, InitializingBean {
         info.setCity(site.getCookies().get(CrawlerConstant.CITY));
         info.setType(site.getCookies().get(CrawlerConstant.TYPE));
 
-        logger.info("process Info {}",resultItems);
+    //    logger.info("process Info {}",resultItems);
         putService.putRequest(info);
     }
 

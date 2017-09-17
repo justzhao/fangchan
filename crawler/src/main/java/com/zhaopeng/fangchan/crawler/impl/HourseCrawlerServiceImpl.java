@@ -49,8 +49,14 @@ public class HourseCrawlerServiceImpl implements HourseCrawlerService,Initializi
         spider.addUrl(city.getUrl());
         spider.thread(threads);
         Site site = spider.getSite();
+
+        site.addCookie("lianjia_uuid","de3b498c-a3b3-472c-a7eb-581b48a94123");
         site.addCookie(CrawlerConstant.CITY, city.getName());
         site.addCookie(CrawlerConstant.TYPE,city.getType());
+        site.addHeader("Accept","text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8");
+        site.addHeader("Accept-Encoding","gzip, deflate, br");
+        site.addHeader("Accept-Language","zh-CN,zh;q=0.8");
+        site.addHeader(" Cache-Control","max-age=0");
 
         start();
     }
